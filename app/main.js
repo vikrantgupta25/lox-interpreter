@@ -297,6 +297,7 @@ if (fileContent.length !== 0) {
             var numberVal = parseFloat(finalNumber);
 
             if (Number.isInteger(numberVal)) {
+              numberVal = parseFloat(finalNumber + ".0");
               numberVal = Number(numberVal).toFixed(1);
             }
 
