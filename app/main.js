@@ -30,6 +30,14 @@ const Tokens = {
   SEMICOLON: "SEMICOLON",
   STAR: "STAR",
   EOF: "EOF",
+  BANG: "BANG",
+  BANG_EQUAL: "BANG_EQUAL",
+  EQUAL: "EQUAL",
+  EQUAL_EQUAL: "EQUAL_EQUAL",
+  GREATER: "GREATER",
+  GREATER_EQUAL: "GREATER_EQUAL",
+  LESS: "LESS",
+  LESS_EQUAL: "LESS_EQUAL",
 };
 
 var tokens = [];
@@ -128,6 +136,78 @@ if (fileContent.length !== 0) {
             literal: null,
             line: i,
           });
+          break;
+        case "!":
+          if (lines[i][j + 1] == "=") {
+            tokens.push({
+              token_type: Tokens.BANG_EQUAL,
+              lexeme: lines[i][j] + lines[i][j + 1],
+              literal: null,
+              line: i,
+            });
+            j++;
+          } else {
+            tokens.push({
+              token_type: Tokens.BANG,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+          }
+          break;
+        case "=":
+          if (lines[i][j + 1] == "=") {
+            tokens.push({
+              token_type: Tokens.EQUAL_EQUAL,
+              lexeme: lines[i][j] + lines[i][j + 1],
+              literal: null,
+              line: i,
+            });
+            j++;
+          } else {
+            tokens.push({
+              token_type: Tokens.EQUAL,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+          }
+          break;
+        case ">":
+          if (lines[i][j + 1] == "=") {
+            tokens.push({
+              token_type: Tokens.GREATER_EQUAL,
+              lexeme: lines[i][j] + lines[i][j + 1],
+              literal: null,
+              line: i,
+            });
+            j++;
+          } else {
+            tokens.push({
+              token_type: Tokens.GREATER,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+          }
+          break;
+        case "<":
+          if (lines[i][j + 1] == "=") {
+            tokens.push({
+              token_type: Tokens.LESS_EQUAL,
+              lexeme: lines[i][j] + lines[i][j + 1],
+              literal: null,
+              line: i,
+            });
+            j++;
+          } else {
+            tokens.push({
+              token_type: Tokens.LESS,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+          }
           break;
         default:
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
