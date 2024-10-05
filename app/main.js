@@ -389,14 +389,14 @@ if (fileContent.length !== 0) {
               tokens.push({
                 token_type: RESERVED_KEYWORDS_TOKEN[iden],
                 lexeme: iden,
-                literal: iden,
+                literal: null,
                 line: i,
               });
             } else {
               tokens.push({
                 token_type: Tokens.IDENTIFIER,
                 lexeme: iden,
-                literal: iden,
+                literal: null,
                 line: i,
               });
             }
