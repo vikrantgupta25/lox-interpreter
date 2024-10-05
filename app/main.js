@@ -19,43 +19,54 @@ const filename = args[1];
 const fileContent = fs.readFileSync(filename, "utf8");
 
 if (fileContent.length !== 0) {
-  for (var i = 0; i < fileContent.length; i++) {
-    switch (fileContent[i]) {
-      case "(":
-        console.log("LEFT_PAREN ( null");
-        break;
-      case ")":
-        console.log("RIGHT_PAREN ) null");
-        break;
-      case "{":
-        console.log("LEFT_BRACE { null");
-        break;
-      case "}":
-        console.log("RIGHT_BRACE } null");
-        break;
-      case ",":
-        console.log("COMMA , null");
-        break;
-      case ".":
-        console.log("DOT . null");
-        break;
-      case "-":
-        console.log("MINUS - null");
-        break;
-      case "+":
-        console.log("PLUS + null");
-        break;
-      case ";":
-        console.log("SEMICOLON ; null");
-        break;
-      case "*":
-        console.log("STAR * null");
-        break;
-      default:
-        break;
+  let lines = fileContent.split("\n");
+
+  lines.forEach((line, index) => {
+    var token = "";
+    var errorTokens = "";
+    for (const ch of line) {
+      switch (ch) {
+        case "(":
+          token += "LEFT_PAREN ( null\n";
+          break;
+        case ")":
+          token += "RIGHT_PAREN ) null\n";
+          break;
+        case "{":
+          token += "LEFT_BRACE { null\n";
+          break;
+        case "}":
+          token += "RIGHT_BRACE } null\n";
+          break;
+        case ",":
+          token += "COMMA , null\n";
+          break;
+        case ".":
+          token += "DOT . null\n";
+          break;
+        case "-":
+          token += "MINUS - null\n";
+          break;
+        case "+":
+          token += "PLUS + null\n";
+          break;
+        case ";":
+          token += "SEMICOLON ; null\n";
+          break;
+        case "*":
+          token += "STAR * null\n";
+          break;
+        default:
+          errorTokens += `[line ${
+            index + 1
+          }] Error: Unexpected character: ${ch}\n`;
+          break;
+      }
     }
-  }
-  console.log("EOF  null");
+    token += "EOF  null\n";
+    token = errorTokens + token;
+    console.log(token);
+  });
 } else {
-  console.log("EOF  null");
+  console.log("EOF  null\n");
 }
