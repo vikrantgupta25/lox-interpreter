@@ -247,7 +247,10 @@ if (fileContent.length !== 0) {
           }
           if (endOfStringI === lines.length) {
             console.error(`[line ${i + 1}] Error: Unterminated string.`);
-            process.exit(65);
+            hasError = true;
+            i = endOfStringI - 1;
+            j = lines[i].length;
+            break;
           }
           tokens.push({
             token_type: Tokens.STRING,
