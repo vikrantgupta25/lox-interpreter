@@ -39,6 +39,7 @@ const Tokens = {
   LESS: "LESS",
   LESS_EQUAL: "LESS_EQUAL",
   SLASH: "SLASH",
+  STRING: "STRING",
 };
 
 var tokens = [];
@@ -227,6 +228,35 @@ if (fileContent.length !== 0) {
         case "\r":
         case "\t":
           // Ignore whitespace.
+          break;
+        case '"':
+          var endOfStringI = i;
+          var endOfStringJ = j + 1;
+          var literalValue = "";
+          while (lines[endOfStringI][endOfStringJ] != '"') {
+            if (endOfStringJ === lines[endOfStringI].length) {
+              endOfStringI++;
+              if (endOfStringI === lines.length) {
+                break;
+              }
+              endOfStringJ = 0;
+            } else {
+              literalValue += lines[endOfStringI][endOfStringJ];
+              endOfStringJ++;
+            }
+          }
+          if (endOfStringI === lines.length) {
+            console.error(`[line ${i + 1}] Error: Unterminated string.`);
+            process.exit(65);
+          }
+          tokens.push({
+            token_type: Tokens.STRING,
+            lexeme: `"${literalValue}"`,
+            literal: literalValue,
+            line: i,
+          });
+          i = endOfStringI;
+          j = endOfStringJ;
           break;
         default:
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
