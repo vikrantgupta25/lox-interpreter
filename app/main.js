@@ -22,10 +22,10 @@ if (fileContent.length !== 0) {
   for (var i = 0; i < fileContent.length; i++) {
     switch (fileContent[i]) {
       case "(":
-        console.log("LEFT_PARAN ( null");
+        console.log("LEFT_PAREN ( null");
         continue;
       case ")":
-        console.log("RIGHT_PARAN ) null");
+        console.log("RIGHT_PAREN ) null");
         continue;
       default:
         continue;
