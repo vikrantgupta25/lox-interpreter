@@ -297,7 +297,7 @@ if (fileContent.length !== 0) {
             var numberVal = parseFloat(finalNumber);
 
             if (Number.isInteger(numberVal)) {
-              numberVal = numberVal.toFixed(1);
+              numberVal = Number(numberVal).toFixed(1);
             }
 
             tokens.push({
