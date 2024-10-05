@@ -306,7 +306,7 @@ if (fileContent.length !== 0) {
               literal: numberVal,
               line: i,
             });
-            j = endOfStringJ;
+            j = endOfStringJ - 1;
             break;
           }
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
