@@ -223,6 +223,11 @@ if (fileContent.length !== 0) {
             });
           }
           break;
+        case " ":
+        case "\r":
+        case "\t":
+          // Ignore whitespace.
+          break;
         default:
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
           hasError = true;
@@ -232,19 +237,19 @@ if (fileContent.length !== 0) {
         break;
       }
     }
-    tokens.push({
-      token_type: Tokens.EOF,
-      lexeme: "",
-      literal: null,
-      line: i,
-    });
+  }
+  tokens.push({
+    token_type: Tokens.EOF,
+    lexeme: "",
+    literal: null,
+    line: i,
+  });
 
-    tokens.forEach((token) => {
-      printToken(token);
-    });
-    if (hasError) {
-      process.exit(65);
-    }
+  tokens.forEach((token) => {
+    printToken(token);
+  });
+  if (hasError) {
+    process.exit(65);
   }
 } else {
   console.log("EOF  null");
