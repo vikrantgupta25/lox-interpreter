@@ -63,7 +63,7 @@ if (fileContent.length !== 0) {
           break;
       }
     }
-    token += "EOF  null\n";
+    token += "EOF  null";
     token = errorTokens + token;
     console.log(token);
   });
