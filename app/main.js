@@ -40,6 +40,7 @@ const Tokens = {
   LESS_EQUAL: "LESS_EQUAL",
   SLASH: "SLASH",
   STRING: "STRING",
+  NUMBER: "NUMBER",
 };
 
 var tokens = [];
@@ -51,6 +52,13 @@ function printToken(token) {
       token.literal ? token.literal : "null"
     }`
   );
+}
+
+function isDigit(ch) {
+  if (ch >= "0" && ch <= "9") {
+    return true;
+  }
+  return false;
 }
 
 if (fileContent.length !== 0) {
@@ -246,7 +254,7 @@ if (fileContent.length !== 0) {
             }
           }
           if (endOfStringI === lines.length) {
-            console.error(`[line ${i + 1}] Error: Unterminated string.`);
+            console.error(`[line ${endOfStringI}] Error: Unterminated string.`);
             hasError = true;
             i = endOfStringI - 1;
             j = lines[i].length;
@@ -262,6 +270,39 @@ if (fileContent.length !== 0) {
           j = endOfStringJ;
           break;
         default:
+          if (isDigit(ch)) {
+            endOfStringI = i;
+            endOfStringJ = j;
+            var integerPart = "";
+            var fractionalPart = "";
+            while (isDigit(lines[endOfStringI][endOfStringJ])) {
+              integerPart += lines[endOfStringI][endOfStringJ];
+              endOfStringJ++;
+            }
+            if (
+              lines[endOfStringI][endOfStringJ] === "." &&
+              isDigit(lines[endOfStringI][endOfStringJ + 1])
+            ) {
+              endOfStringJ++;
+              while (isDigit(lines[endOfStringI][endOfStringJ])) {
+                fractionalPart += lines[endOfStringI][endOfStringJ];
+                endOfStringJ++;
+              }
+            }
+            var finalNumber = integerPart;
+            if (fractionalPart.length !== 0) {
+              finalNumber = finalNumber + "." + fractionalPart;
+            }
+
+            tokens.push({
+              token_type: Tokens.NUMBER,
+              lexeme: finalNumber,
+              literal: parseFloat(finalNumber),
+              line: i,
+            });
+            j = endOfStringJ;
+            break;
+          }
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
           hasError = true;
           break;
