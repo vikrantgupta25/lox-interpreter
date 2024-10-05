@@ -297,7 +297,6 @@ if (fileContent.length !== 0) {
             var numberVal = parseFloat(finalNumber);
 
             if (Number.isInteger(numberVal)) {
-              numberVal = parseFloat(finalNumber + ".0");
               numberVal = Number(numberVal).toFixed(1);
             }
 
@@ -305,7 +304,6 @@ if (fileContent.length !== 0) {
               token_type: Tokens.NUMBER,
               lexeme: finalNumber,
               literal: numberVal,
-              literal: parseFloat(finalNumber),
               line: i,
             });
             j = endOfStringJ;
