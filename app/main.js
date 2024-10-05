@@ -23,7 +23,7 @@ if (fileContent.length !== 0) {
 
   lines.forEach((line, index) => {
     var token = "";
-    var errorTokens = "";
+    var hasError = false;
     for (const ch of line) {
       switch (ch) {
         case "(":
@@ -57,19 +57,19 @@ if (fileContent.length !== 0) {
           token += "STAR * null\n";
           break;
         default:
-          errorTokens += `[line ${
-            index + 1
-          }] Error: Unexpected character: ${ch}\n`;
+          console.error(
+            `[line ${index + 1}] Error: Unexpected character: ${ch}`
+          );
+          hasError = true;
           break;
       }
     }
     token += "EOF  null";
-    token = errorTokens + token;
     console.log(token);
-    if (errorTokens.length != 0) {
+    if (hasError) {
       process.exit(65);
     }
   });
 } else {
-  console.log("EOF  null\n");
+  console.log("EOF  null");
 }
