@@ -128,7 +128,7 @@ const RESERVED_KEYWORDS_TOKEN = {
   this: Tokens.THIS,
   true: Tokens.TRUE,
   var: Tokens.VAR,
-  whilea: Tokens.WHILE,
+  while: Tokens.WHILE,
 };
 
 if (fileContent.length !== 0) {
