@@ -66,6 +66,9 @@ if (fileContent.length !== 0) {
     token += "EOF  null";
     token = errorTokens + token;
     console.log(token);
+    if (errorTokens.length != 0) {
+      process.exit(65);
+    }
   });
 } else {
   console.log("EOF  null\n");
