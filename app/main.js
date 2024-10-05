@@ -41,6 +41,23 @@ const Tokens = {
   SLASH: "SLASH",
   STRING: "STRING",
   NUMBER: "NUMBER",
+  IDENTIFIER: "IDENTIFIER",
+  AND: "AND",
+  CLASS: "CLASS",
+  ELSE: "ELSE",
+  FALSE: "FALSE",
+  FOR: "FOR",
+  FUN: "FUN",
+  IF: "IF",
+  NIL: "NIL",
+  OR: "OR",
+  PRINT: "PRINT",
+  RETURN: "RETURN",
+  SUPER: "SUPER",
+  THIS: "THIS",
+  TRUE: "TRUE",
+  VAR: "VAR",
+  WHILE: "WHILE",
 };
 
 var tokens = [];
@@ -60,6 +77,59 @@ function isDigit(ch) {
   }
   return false;
 }
+
+function isAlpha(ch) {
+  if ((ch >= "a" && ch <= "z") || (ch >= "A" && ch <= "Z") || ch == "_") {
+    return true;
+  }
+  return false;
+}
+
+function isAlphaNumeric(ch) {
+  if (isAlpha(ch) || isDigit(ch)) {
+    return true;
+  }
+
+  return false;
+}
+
+const RESERVED_KEYWORDS = [
+  "and",
+  "class",
+  "else",
+  "false",
+  "for",
+  "fun",
+  "if",
+  "nil",
+  "or",
+  "print",
+  "return",
+  "super",
+  "this",
+  "true",
+  "var",
+  "while",
+];
+
+const RESERVED_KEYWORDS_TOKEN = {
+  and: Tokens.AND,
+  class: Tokens.CLASS,
+  else: Tokens.ELSE,
+  false: Tokens.FALSE,
+  for: Tokens.FOR,
+  fun: Tokens.FUN,
+  if: Tokens.IF,
+  nil: Tokens.NIL,
+  or: Tokens.OR,
+  print: Tokens.PRINT,
+  return: Tokens.RETURN,
+  super: Tokens.SUPER,
+  this: Tokens.THIS,
+  true: Tokens.TRUE,
+  var: Tokens.VAR,
+  whilea: Tokens.WHILE,
+};
 
 if (fileContent.length !== 0) {
   let lines = fileContent.split("\n");
@@ -308,9 +378,34 @@ if (fileContent.length !== 0) {
             });
             j = endOfStringJ - 1;
             break;
+          } else if (isAlpha(ch)) {
+            endOfStringJ = j + 1;
+            var iden = lines[i][j];
+            while (isAlphaNumeric(lines[i][endOfStringJ])) {
+              iden += lines[i][endOfStringJ];
+              endOfStringJ++;
+            }
+            if (RESERVED_KEYWORDS.some((w) => w === iden)) {
+              tokens.push({
+                token_type: RESERVED_KEYWORDS_TOKEN[iden],
+                lexeme: iden,
+                literal: iden,
+                line: i,
+              });
+            } else {
+              tokens.push({
+                token_type: Tokens.IDENTIFIER,
+                lexeme: iden,
+                literal: iden,
+                line: i,
+              });
+            }
+            j = endOfStringJ - 1;
+            break;
+          } else {
+            console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
+            hasError = true;
           }
-          console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
-          hasError = true;
           break;
       }
       if (foundComment) {
