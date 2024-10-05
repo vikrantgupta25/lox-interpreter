@@ -38,6 +38,7 @@ const Tokens = {
   GREATER_EQUAL: "GREATER_EQUAL",
   LESS: "LESS",
   LESS_EQUAL: "LESS_EQUAL",
+  SLASH: "SLASH",
 };
 
 var tokens = [];
@@ -56,6 +57,7 @@ if (fileContent.length !== 0) {
   for (var i = 0; i < lines.length; i++) {
     for (var j = 0; j < lines[i].length; j++) {
       const ch = lines[i][j];
+      var foundComment = false;
       switch (ch) {
         case "(":
           tokens.push({
@@ -138,7 +140,7 @@ if (fileContent.length !== 0) {
           });
           break;
         case "!":
-          if (lines[i][j + 1] == "=") {
+          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
             tokens.push({
               token_type: Tokens.BANG_EQUAL,
               lexeme: lines[i][j] + lines[i][j + 1],
@@ -156,7 +158,7 @@ if (fileContent.length !== 0) {
           }
           break;
         case "=":
-          if (lines[i][j + 1] == "=") {
+          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
             tokens.push({
               token_type: Tokens.EQUAL_EQUAL,
               lexeme: lines[i][j] + lines[i][j + 1],
@@ -174,7 +176,7 @@ if (fileContent.length !== 0) {
           }
           break;
         case ">":
-          if (lines[i][j + 1] == "=") {
+          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
             tokens.push({
               token_type: Tokens.GREATER_EQUAL,
               lexeme: lines[i][j] + lines[i][j + 1],
@@ -192,7 +194,7 @@ if (fileContent.length !== 0) {
           }
           break;
         case "<":
-          if (lines[i][j + 1] == "=") {
+          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
             tokens.push({
               token_type: Tokens.LESS_EQUAL,
               lexeme: lines[i][j] + lines[i][j + 1],
@@ -209,10 +211,25 @@ if (fileContent.length !== 0) {
             });
           }
           break;
+        case "/":
+          if (j != lines[i].length - 1 && lines[i][j + 1] == "/") {
+            foundComment = true;
+          } else {
+            tokens.push({
+              token_type: Tokens.SLASH,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+          }
+          break;
         default:
           console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
           hasError = true;
           break;
+      }
+      if (foundComment) {
+        break;
       }
     }
     tokens.push({
