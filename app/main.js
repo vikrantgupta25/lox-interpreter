@@ -294,9 +294,16 @@ if (fileContent.length !== 0) {
               finalNumber = finalNumber + "." + fractionalPart;
             }
 
+            var numberVal = parseFloat(finalNumber);
+
+            if (Number.isInteger(numberVal)) {
+              numberVal = numberVal.toFixed(1);
+            }
+
             tokens.push({
               token_type: Tokens.NUMBER,
               lexeme: finalNumber,
+              literal: numberVal,
               literal: parseFloat(finalNumber),
               line: i,
             });
