@@ -23,18 +23,36 @@ if (fileContent.length !== 0) {
     switch (fileContent[i]) {
       case "(":
         console.log("LEFT_PAREN ( null");
-        continue;
+        break;
       case ")":
         console.log("RIGHT_PAREN ) null");
-        continue;
+        break;
       case "{":
         console.log("LEFT_BRACE { null");
-        continue;
+        break;
       case "}":
         console.log("RIGHT_BRACE } null");
-        continue;
+        break;
+      case ",":
+        console.log("COMMA , null");
+        break;
+      case ".":
+        console.log("DOT . null");
+        break;
+      case "-":
+        console.log("MINUS - null");
+        break;
+      case "+":
+        console.log("PLUS + null");
+        break;
+      case ";":
+        console.log("SEMICOLON ; null");
+        break;
+      case "*":
+        console.log("STAR * null");
+        break;
       default:
-        continue;
+        break;
     }
   }
   console.log("EOF  null");
