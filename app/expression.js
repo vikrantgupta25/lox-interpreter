@@ -13,7 +13,7 @@ export class BinaryExpression extends Expression {
   }
 
   accept(visitor) {
-    visitor.visitBinaryExpression(this);
+    return visitor.visitBinaryExpression(this);
   }
 }
 
@@ -24,7 +24,7 @@ export class UnaryExpression extends Expression {
     this.right = right;
   }
   accept(visitor) {
-    visitor.visitUnaryExpression(this);
+    return visitor.visitUnaryExpression(this);
   }
 }
 
@@ -34,7 +34,7 @@ export class Grouping extends Expression {
     this.expression = expression;
   }
   accept(visitor) {
-    visitor.visitGroupingExpression(this);
+    return visitor.visitGroupingExpression(this);
   }
 }
 
@@ -44,6 +44,6 @@ export class Literal extends Expression {
     this.value = value;
   }
   accept(visitor) {
-    visitor.visitLiteralExpression(this);
+    return visitor.visitLiteralExpression(this);
   }
 }

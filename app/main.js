@@ -1,5 +1,10 @@
 import fs from "fs";
-import { BinaryExpression } from "./expression.js";
+import {
+  BinaryExpression,
+  UnaryExpression,
+  Literal,
+  Grouping,
+} from "./expression.js";
 import { ASTPrinter } from "./printer.js";
 
 const args = process.argv.slice(2); // Skip the first two arguments (node path and script path)
@@ -488,8 +493,15 @@ if (!ACCEPTABLE_COMMANDS.includes(command)) {
   parse(tokens);
 }
 
-var expressionObject = new BinaryExpression("left", "operator", "right");
+var expressionObject = new BinaryExpression(
+  new UnaryExpression(
+    { token_type: Tokens.MINUS, lexeme: "-", literal: null },
+    new Literal(123)
+  ),
+  { token_type: Tokens.STAR, lexeme: "*", literal: null },
+  new Grouping(new Literal(45.67))
+);
 
 var ASTPrinterObject = new ASTPrinter();
 
-ASTPrinterObject.print(expressionObject);
+console.log(ASTPrinterObject.print(expressionObject));

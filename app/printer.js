@@ -16,27 +16,31 @@ export class Visitor {
 
 export class ASTPrinter extends Visitor {
   print(expression) {
-    expression.accept(this);
+    return expression.accept(this);
   }
 
-  parenthesize(...exprs) {
-    // todo[vikrantgupta25]: define the proper parenthesize function here to complete the ASTPrinter Visitor
-    console.log(exprs);
+  parenthesize(name, ...exprs) {
+    var resultExpression = `(${name}`;
+    exprs.forEach((exp) => {
+      resultExpression += ` ${exp.accept(this)}`;
+    });
+    resultExpression += ")";
+    return resultExpression;
   }
 
   visitBinaryExpression(expr) {
-    this.parenthesize(expr.operator.lexeme, expr.left, expr.right);
+    return this.parenthesize(expr.operator.lexeme, expr.left, expr.right);
   }
 
-  visitUnaryExpression() {
-    this.parenthesize(expr.operator.lexeme, expr.right);
+  visitUnaryExpression(expr) {
+    return this.parenthesize(expr.operator.lexeme, expr.right);
   }
 
   visitGroupingExpression(expr) {
-    this.parenthesize("group", expr.expression);
+    return this.parenthesize("group", expr.expression);
   }
 
-  visitLiteralExpression() {
+  visitLiteralExpression(expr) {
     if (expr.value == null) return "nil";
     return expr.value.toString();
   }
