@@ -466,7 +466,7 @@ function parse(tokens = []) {
           RESERVED_KEYWORDS.includes(tokens[i].lexeme) ||
           tokens[i].literal != null
         ) {
-          resultString += tokens[i].lexeme || tokens[i].literal;
+          resultString += tokens[i].literal || tokens[i].lexeme;
         }
         break;
     }
