@@ -451,20 +451,27 @@ function tokenize(shallPrintToken) {
   }
 }
 
-function parse(tokens) {
-  if (fileContent.length !== 0) {
-    for (var i = 0; i < tokens.length; i++) {
-      switch (tokens[i].token_type) {
-        default:
-          if (RESERVED_KEYWORDS.includes(tokens[i].lexeme)) {
-            console.log(tokens[i].lexeme);
-          } else if (tokens[i].literal != null) {
-            console.log(tokens[i].literal);
-          }
-          break;
-      }
+function parse(tokens = []) {
+  let resultString = "";
+  for (let i = 0; i < tokens.length; i++) {
+    switch (tokens[i].token_type) {
+      case Tokens.LEFT_PAREN:
+        resultString += tokens[i].lexeme + "group ";
+        break;
+      case Tokens.RIGHT_PAREN:
+        resultString += tokens[i].lexeme;
+        break;
+      default:
+        if (
+          RESERVED_KEYWORDS.includes(tokens[i].lexeme) ||
+          tokens[i].literal != null
+        ) {
+          resultString += tokens[i].lexeme || tokens[i].literal;
+        }
+        break;
     }
   }
+  console.log(resultString);
 }
 
 if (!ACCEPTABLE_COMMANDS.includes(command)) {
