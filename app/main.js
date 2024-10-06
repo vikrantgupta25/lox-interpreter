@@ -1,4 +1,6 @@
 import fs from "fs";
+import { BinaryExpression } from "./expression.js";
+import { ASTPrinter } from "./printer.js";
 
 const args = process.argv.slice(2); // Skip the first two arguments (node path and script path)
 
@@ -485,3 +487,9 @@ if (!ACCEPTABLE_COMMANDS.includes(command)) {
   tokenize(false);
   parse(tokens);
 }
+
+var expressionObject = new BinaryExpression("left", "operator", "right");
+
+var ASTPrinterObject = new ASTPrinter();
+
+ASTPrinterObject.print(expressionObject);
