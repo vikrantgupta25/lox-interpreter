@@ -461,6 +461,8 @@ function parse(tokens = []) {
       case Tokens.RIGHT_PAREN:
         resultString += tokens[i].lexeme;
         break;
+      case Tokens.BANG:
+      case Tokens.MINUS:
       default:
         if (
           RESERVED_KEYWORDS.includes(tokens[i].lexeme) ||
