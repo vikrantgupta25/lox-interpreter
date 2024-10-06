@@ -9,10 +9,7 @@ if (args.length < 2) {
 
 const command = args[0];
 
-if (command !== "tokenize") {
-  console.error(`Usage: Unknown command: ${command}`);
-  process.exit(1);
-}
+const ACCEPTABLE_COMMANDS = ["tokenize", "parse"];
 
 const filename = args[1];
 
@@ -131,301 +128,328 @@ const RESERVED_KEYWORDS_TOKEN = {
   while: Tokens.WHILE,
 };
 
-if (fileContent.length !== 0) {
-  let lines = fileContent.split("\n");
-  for (var i = 0; i < lines.length; i++) {
-    for (var j = 0; j < lines[i].length; j++) {
-      const ch = lines[i][j];
-      var foundComment = false;
-      switch (ch) {
-        case "(":
-          tokens.push({
-            token_type: Tokens.LEFT_PAREN,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case ")":
-          tokens.push({
-            token_type: Tokens.RIGHT_PAREN,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "{":
-          tokens.push({
-            token_type: Tokens.LEFT_BRACE,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "}":
-          tokens.push({
-            token_type: Tokens.RIGHT_BRACE,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case ",":
-          tokens.push({
-            token_type: Tokens.COMMA,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case ".":
-          tokens.push({
-            token_type: Tokens.DOT,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "-":
-          tokens.push({
-            token_type: Tokens.MINUS,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "+":
-          tokens.push({
-            token_type: Tokens.PLUS,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case ";":
-          tokens.push({
-            token_type: Tokens.SEMICOLON,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "*":
-          tokens.push({
-            token_type: Tokens.STAR,
-            lexeme: ch,
-            literal: null,
-            line: i,
-          });
-          break;
-        case "!":
-          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
+function tokenize() {
+  if (fileContent.length !== 0) {
+    let lines = fileContent.split("\n");
+    for (var i = 0; i < lines.length; i++) {
+      for (var j = 0; j < lines[i].length; j++) {
+        const ch = lines[i][j];
+        var foundComment = false;
+        switch (ch) {
+          case "(":
             tokens.push({
-              token_type: Tokens.BANG_EQUAL,
-              lexeme: lines[i][j] + lines[i][j + 1],
-              literal: null,
-              line: i,
-            });
-            j++;
-          } else {
-            tokens.push({
-              token_type: Tokens.BANG,
+              token_type: Tokens.LEFT_PAREN,
               lexeme: ch,
               literal: null,
               line: i,
             });
-          }
-          break;
-        case "=":
-          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
-            tokens.push({
-              token_type: Tokens.EQUAL_EQUAL,
-              lexeme: lines[i][j] + lines[i][j + 1],
-              literal: null,
-              line: i,
-            });
-            j++;
-          } else {
-            tokens.push({
-              token_type: Tokens.EQUAL,
-              lexeme: ch,
-              literal: null,
-              line: i,
-            });
-          }
-          break;
-        case ">":
-          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
-            tokens.push({
-              token_type: Tokens.GREATER_EQUAL,
-              lexeme: lines[i][j] + lines[i][j + 1],
-              literal: null,
-              line: i,
-            });
-            j++;
-          } else {
-            tokens.push({
-              token_type: Tokens.GREATER,
-              lexeme: ch,
-              literal: null,
-              line: i,
-            });
-          }
-          break;
-        case "<":
-          if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
-            tokens.push({
-              token_type: Tokens.LESS_EQUAL,
-              lexeme: lines[i][j] + lines[i][j + 1],
-              literal: null,
-              line: i,
-            });
-            j++;
-          } else {
-            tokens.push({
-              token_type: Tokens.LESS,
-              lexeme: ch,
-              literal: null,
-              line: i,
-            });
-          }
-          break;
-        case "/":
-          if (j != lines[i].length - 1 && lines[i][j + 1] == "/") {
-            foundComment = true;
-          } else {
-            tokens.push({
-              token_type: Tokens.SLASH,
-              lexeme: ch,
-              literal: null,
-              line: i,
-            });
-          }
-          break;
-        case " ":
-        case "\r":
-        case "\t":
-          // Ignore whitespace.
-          break;
-        case '"':
-          var endOfStringI = i;
-          var endOfStringJ = j + 1;
-          var literalValue = "";
-          while (lines[endOfStringI][endOfStringJ] != '"') {
-            if (endOfStringJ === lines[endOfStringI].length) {
-              endOfStringI++;
-              if (endOfStringI === lines.length) {
-                break;
-              }
-              endOfStringJ = 0;
-            } else {
-              literalValue += lines[endOfStringI][endOfStringJ];
-              endOfStringJ++;
-            }
-          }
-          if (endOfStringI === lines.length) {
-            console.error(`[line ${endOfStringI}] Error: Unterminated string.`);
-            hasError = true;
-            i = endOfStringI - 1;
-            j = lines[i].length;
             break;
-          }
-          tokens.push({
-            token_type: Tokens.STRING,
-            lexeme: `"${literalValue}"`,
-            literal: literalValue,
-            line: i,
-          });
-          i = endOfStringI;
-          j = endOfStringJ;
-          break;
-        default:
-          if (isDigit(ch)) {
-            endOfStringI = i;
-            endOfStringJ = j;
-            var integerPart = "";
-            var fractionalPart = "";
-            while (isDigit(lines[endOfStringI][endOfStringJ])) {
-              integerPart += lines[endOfStringI][endOfStringJ];
-              endOfStringJ++;
+          case ")":
+            tokens.push({
+              token_type: Tokens.RIGHT_PAREN,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "{":
+            tokens.push({
+              token_type: Tokens.LEFT_BRACE,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "}":
+            tokens.push({
+              token_type: Tokens.RIGHT_BRACE,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case ",":
+            tokens.push({
+              token_type: Tokens.COMMA,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case ".":
+            tokens.push({
+              token_type: Tokens.DOT,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "-":
+            tokens.push({
+              token_type: Tokens.MINUS,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "+":
+            tokens.push({
+              token_type: Tokens.PLUS,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case ";":
+            tokens.push({
+              token_type: Tokens.SEMICOLON,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "*":
+            tokens.push({
+              token_type: Tokens.STAR,
+              lexeme: ch,
+              literal: null,
+              line: i,
+            });
+            break;
+          case "!":
+            if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
+              tokens.push({
+                token_type: Tokens.BANG_EQUAL,
+                lexeme: lines[i][j] + lines[i][j + 1],
+                literal: null,
+                line: i,
+              });
+              j++;
+            } else {
+              tokens.push({
+                token_type: Tokens.BANG,
+                lexeme: ch,
+                literal: null,
+                line: i,
+              });
             }
-            if (
-              lines[endOfStringI][endOfStringJ] === "." &&
-              isDigit(lines[endOfStringI][endOfStringJ + 1])
-            ) {
-              endOfStringJ++;
-              while (isDigit(lines[endOfStringI][endOfStringJ])) {
-                fractionalPart += lines[endOfStringI][endOfStringJ];
+            break;
+          case "=":
+            if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
+              tokens.push({
+                token_type: Tokens.EQUAL_EQUAL,
+                lexeme: lines[i][j] + lines[i][j + 1],
+                literal: null,
+                line: i,
+              });
+              j++;
+            } else {
+              tokens.push({
+                token_type: Tokens.EQUAL,
+                lexeme: ch,
+                literal: null,
+                line: i,
+              });
+            }
+            break;
+          case ">":
+            if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
+              tokens.push({
+                token_type: Tokens.GREATER_EQUAL,
+                lexeme: lines[i][j] + lines[i][j + 1],
+                literal: null,
+                line: i,
+              });
+              j++;
+            } else {
+              tokens.push({
+                token_type: Tokens.GREATER,
+                lexeme: ch,
+                literal: null,
+                line: i,
+              });
+            }
+            break;
+          case "<":
+            if (j != lines[i].length - 1 && lines[i][j + 1] == "=") {
+              tokens.push({
+                token_type: Tokens.LESS_EQUAL,
+                lexeme: lines[i][j] + lines[i][j + 1],
+                literal: null,
+                line: i,
+              });
+              j++;
+            } else {
+              tokens.push({
+                token_type: Tokens.LESS,
+                lexeme: ch,
+                literal: null,
+                line: i,
+              });
+            }
+            break;
+          case "/":
+            if (j != lines[i].length - 1 && lines[i][j + 1] == "/") {
+              foundComment = true;
+            } else {
+              tokens.push({
+                token_type: Tokens.SLASH,
+                lexeme: ch,
+                literal: null,
+                line: i,
+              });
+            }
+            break;
+          case " ":
+          case "\r":
+          case "\t":
+            // Ignore whitespace.
+            break;
+          case '"':
+            var endOfStringI = i;
+            var endOfStringJ = j + 1;
+            var literalValue = "";
+            while (lines[endOfStringI][endOfStringJ] != '"') {
+              if (endOfStringJ === lines[endOfStringI].length) {
+                endOfStringI++;
+                if (endOfStringI === lines.length) {
+                  break;
+                }
+                endOfStringJ = 0;
+              } else {
+                literalValue += lines[endOfStringI][endOfStringJ];
                 endOfStringJ++;
               }
             }
-            var finalNumber = integerPart;
-            if (fractionalPart.length !== 0) {
-              finalNumber = finalNumber + "." + fractionalPart;
+            if (endOfStringI === lines.length) {
+              console.error(
+                `[line ${endOfStringI}] Error: Unterminated string.`
+              );
+              hasError = true;
+              i = endOfStringI - 1;
+              j = lines[i].length;
+              break;
             }
-
-            var numberVal = parseFloat(finalNumber);
-
-            if (Number.isInteger(numberVal)) {
-              numberVal = Number(numberVal).toFixed(1);
-            }
-
             tokens.push({
-              token_type: Tokens.NUMBER,
-              lexeme: finalNumber,
-              literal: numberVal,
+              token_type: Tokens.STRING,
+              lexeme: `"${literalValue}"`,
+              literal: literalValue,
               line: i,
             });
-            j = endOfStringJ - 1;
+            i = endOfStringI;
+            j = endOfStringJ;
             break;
-          } else if (isAlpha(ch)) {
-            endOfStringJ = j + 1;
-            var iden = lines[i][j];
-            while (isAlphaNumeric(lines[i][endOfStringJ])) {
-              iden += lines[i][endOfStringJ];
-              endOfStringJ++;
-            }
-            if (RESERVED_KEYWORDS.some((w) => w === iden)) {
+          default:
+            if (isDigit(ch)) {
+              endOfStringI = i;
+              endOfStringJ = j;
+              var integerPart = "";
+              var fractionalPart = "";
+              while (isDigit(lines[endOfStringI][endOfStringJ])) {
+                integerPart += lines[endOfStringI][endOfStringJ];
+                endOfStringJ++;
+              }
+              if (
+                lines[endOfStringI][endOfStringJ] === "." &&
+                isDigit(lines[endOfStringI][endOfStringJ + 1])
+              ) {
+                endOfStringJ++;
+                while (isDigit(lines[endOfStringI][endOfStringJ])) {
+                  fractionalPart += lines[endOfStringI][endOfStringJ];
+                  endOfStringJ++;
+                }
+              }
+              var finalNumber = integerPart;
+              if (fractionalPart.length !== 0) {
+                finalNumber = finalNumber + "." + fractionalPart;
+              }
+
+              var numberVal = parseFloat(finalNumber);
+
+              if (Number.isInteger(numberVal)) {
+                numberVal = Number(numberVal).toFixed(1);
+              }
+
               tokens.push({
-                token_type: RESERVED_KEYWORDS_TOKEN[iden],
-                lexeme: iden,
-                literal: null,
+                token_type: Tokens.NUMBER,
+                lexeme: finalNumber,
+                literal: numberVal,
                 line: i,
               });
+              j = endOfStringJ - 1;
+              break;
+            } else if (isAlpha(ch)) {
+              endOfStringJ = j + 1;
+              var iden = lines[i][j];
+              while (isAlphaNumeric(lines[i][endOfStringJ])) {
+                iden += lines[i][endOfStringJ];
+                endOfStringJ++;
+              }
+              if (RESERVED_KEYWORDS.some((w) => w === iden)) {
+                tokens.push({
+                  token_type: RESERVED_KEYWORDS_TOKEN[iden],
+                  lexeme: iden,
+                  literal: null,
+                  line: i,
+                });
+              } else {
+                tokens.push({
+                  token_type: Tokens.IDENTIFIER,
+                  lexeme: iden,
+                  literal: null,
+                  line: i,
+                });
+              }
+              j = endOfStringJ - 1;
+              break;
             } else {
-              tokens.push({
-                token_type: Tokens.IDENTIFIER,
-                lexeme: iden,
-                literal: null,
-                line: i,
-              });
+              console.error(
+                `[line ${i + 1}] Error: Unexpected character: ${ch}`
+              );
+              hasError = true;
             }
-            j = endOfStringJ - 1;
             break;
-          } else {
-            console.error(`[line ${i + 1}] Error: Unexpected character: ${ch}`);
-            hasError = true;
-          }
+        }
+        if (foundComment) {
           break;
-      }
-      if (foundComment) {
-        break;
+        }
       }
     }
-  }
-  tokens.push({
-    token_type: Tokens.EOF,
-    lexeme: "",
-    literal: null,
-    line: i,
-  });
+    tokens.push({
+      token_type: Tokens.EOF,
+      lexeme: "",
+      literal: null,
+      line: i,
+    });
 
-  tokens.forEach((token) => {
-    printToken(token);
-  });
-  if (hasError) {
-    process.exit(65);
+    tokens.forEach((token) => {
+      printToken(token);
+    });
+    if (hasError) {
+      process.exit(65);
+    }
+  } else {
+    console.log("EOF  null");
   }
-} else {
-  console.log("EOF  null");
+}
+
+function parse() {
+  if (fileContent.length !== 0) {
+    const fileLines = fileContent.split("\n");
+    let parsed = "";
+    let cases = ["true", "false", "nil"];
+    for (let line of fileLines) {
+      if (cases.includes(line)) parsed += line;
+    }
+    console.log(parsed);
+  }
+}
+
+if (!ACCEPTABLE_COMMANDS.includes(command)) {
+  console.error(`Usage: Unknown command: ${command}`);
+  process.exit(1);
+} else if (command === ACCEPTABLE_COMMANDS[0]) {
+  tokenize();
+} else if (command === ACCEPTABLE_COMMANDS[1]) {
+  parse();
 }
