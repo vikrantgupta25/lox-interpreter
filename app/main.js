@@ -128,7 +128,13 @@ const RESERVED_KEYWORDS_TOKEN = {
   while: Tokens.WHILE,
 };
 
-function tokenize() {
+function equality() {}
+
+function expression() {
+  return equality();
+}
+
+function tokenize(shallPrintToken) {
   if (fileContent.length !== 0) {
     let lines = fileContent.split("\n");
     for (var i = 0; i < lines.length; i++) {
@@ -422,26 +428,42 @@ function tokenize() {
       line: i,
     });
 
-    tokens.forEach((token) => {
-      printToken(token);
-    });
+    if (shallPrintToken) {
+      tokens.forEach((token) => {
+        printToken(token);
+      });
+    }
     if (hasError) {
       process.exit(65);
     }
   } else {
-    console.log("EOF  null");
+    tokens.push({
+      token_type: Tokens.EOF,
+      lexeme: "",
+      literal: null,
+      line: i,
+    });
+    if (shallPrintToken) {
+      tokens.forEach((token) => {
+        printToken(token);
+      });
+    }
   }
 }
 
-function parse() {
+function parse(tokens) {
   if (fileContent.length !== 0) {
-    const fileLines = fileContent.split("\n");
-    let parsed = "";
-    let cases = ["true", "false", "nil"];
-    for (let line of fileLines) {
-      if (cases.includes(line)) parsed += line;
+    for (var i = 0; i < tokens.length; i++) {
+      switch (tokens[i].token_type) {
+        default:
+          if (RESERVED_KEYWORDS.includes(tokens[i].lexeme)) {
+            console.log(tokens[i].lexeme);
+          } else if (tokens[i].literal != null) {
+            console.log(tokens[i].literal);
+          }
+          break;
+      }
     }
-    console.log(parsed);
   }
 }
 
@@ -449,7 +471,8 @@ if (!ACCEPTABLE_COMMANDS.includes(command)) {
   console.error(`Usage: Unknown command: ${command}`);
   process.exit(1);
 } else if (command === ACCEPTABLE_COMMANDS[0]) {
-  tokenize();
+  tokenize(true);
 } else if (command === ACCEPTABLE_COMMANDS[1]) {
-  parse();
+  tokenize(false);
+  parse(tokens);
 }
